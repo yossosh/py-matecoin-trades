@@ -10,17 +10,17 @@ def calculate_profit(trades_information_file: str) -> None:
     matecoin_account = Decimal("0")
 
     for trade in trades:
-        bought = trade.get("bought")
-        sold = trade.get("sold")
+        # Перевірка, чи значення поля не є None перед конвертацією в Decimal
+        bought = Decimal(trade["bought"]) if trade.get("bought") is not None else Decimal("0")
+        sold = Decimal(trade["sold"]) if trade.get("sold") is not None else Decimal("0")
         matecoin_price = Decimal(trade["matecoin_price"])
-        if bought:
-            bought_volume = Decimal(bought)
-            earned_money -= bought_volume * matecoin_price
-            matecoin_account += bought_volume
-        elif sold:
-            sold_volume = Decimal(sold)
-            earned_money += sold_volume * matecoin_price
-            matecoin_account -= sold_volume
+
+        # Розрахунок прибутку
+        earned_money += sold * matecoin_price
+        earned_money -= bought * matecoin_price
+        matecoin_account += bought
+        matecoin_account -= sold
+
 
     profit_data = {
         "earned_money": str(earned_money),
